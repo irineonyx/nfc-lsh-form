@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>NFC Sign In</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.6/css/selectize.min.css" integrity="sha512-zSutnLmqtlWVx0A5NdW8YwshpUETPzJ6YBAvb+bkE0QbVKopS0ACPjE6QY6F9aFPSowfiho+hgeQh095FRPj5A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <script src="https://kit.fontawesome.com/b8646944c8.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.6/js/standalone/selectize.js" integrity="sha512-X6kWCt4NijyqM0ebb3vgEPE8jtUu9OGGXYGJ86bXTm3oH+oJ5+2UBvUw+uz+eEf3DcTTfJT4YQu/7F6MRV+wbA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  </head>
+  <body>
+    <style>
+      .form-group{
+        /*display: none;*/
+      }
+      input[type=date]{
+        width: 200px;
+      }
+      .tabs ul{
+        margin:  0;
+      }
+      .content-tab{
+        padding-top: 50px;
+        padding-bottom: 50px;
+      }
+      #sign-in-content{
+        padding: 20px;
+      }
+      .modal .box{
+        text-align: center;
+      }
+      .submit-message{
+        margin: 20px 0;
+      }
+      .fa-circle-check{
+        color: yellowgreen;
+      }
+      .fa-circle-xmark{
+        color: crimson;
+      }
+    </style>
+
+    <!--Add buttons to initiate auth sequence and sign out-->
+    <button id="authorize_button">Sign In To Authorize</button>
+    <button id="signout_button">Sign Out</button>
+
+    <div id="form-container" class="container" style="display: none;">
+        <div class="content form-group">
+            <section class="hero is-light">
+                <div class="hero-head">
+                    <div id="sign-in-content"></div>
+                </div>
+
+                <div class="hero-foot">
+                    <div class="tabs is-boxed is-fullwidth is-large">
+                        <ul>
+                            <li id="tab-mfs" class="is-active tab-menu"><a>LSH</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <div id="content-tab-lsh" class="content-tab">
+                <form id="form-lsh" method="POST">
+                    <h4 class="title is-4">Main Applicant (Parent)</h3>
+                    <!-- section main applicant -->
+                    <div class="box">
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Salutation</label>
+                                    <div class="select">
+                                        <select name="parent_salutation" required>
+                                            <option>Mr</option>
+                                            <option>Ms</option>
+                                            <option>Madm</option>
+                                            <option>Mrs</option>
+                                            <option>Dr</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Full Name</label>
+                                    <div class="control">
+                                        <input class="input" type="text" placeholder="Full Name" name="parent_full_name" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Email</label>
+                                    <div class="control">
+                                        <input class="input" type="text" placeholder="Email" name="parent_email" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Mobile No.</label>
+                                    <div class="control">
+                                        <input class="input" type="text" placeholder="Mobile" name="parent_phone" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">NRIC / FIN / Passport No.</label>
+                            <div class="control">
+                                <input class="input" type="text" placeholder="NRIC / FIN / Passport No." name="parent_identify_no" required>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Relationship to Child</label>
+                            <div class="select">
+                                <select name="relationship_to_child" required>
+                                    <option>Mother</option>
+                                    <option>Father</option>
+                                    <option>MSF Foster Parent</option>
+                                    <option>Head, Children Home</option>
+                                    <option>Legal Guardian</option>
+                                    <option>Any Other Caregiver</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Postal Code</label>
+                            <div class="control">
+                                <input class="input" type="text" placeholder="" name="postal_code" required>
+                            </div>
+                        </div>
+
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Street Name</label>
+                                    <div class="control">
+                                        <input class="input" type="text" placeholder="" name="street_name" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Building Name</label>
+                                    <div class="control">
+                                        <input class="input" type="text" placeholder="" name="building_name" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Block No.</label>
+                                    <div class="control">
+                                        <input class="input" type="text" placeholder="" name="block_no" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Floor No.</label>
+                                    <div class="control">
+                                        <input class="input" type="text" placeholder="" name="floor_no" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Unit No.</label>
+                                    <div class="control">
+                                        <input class="input" type="text" placeholder="" name="unit_no" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end section main applicant -->
+                    
+                    <h4 class="title is-4">Child</h3>
+                    <!-- section child -->
+                    <div class="box">
+                        <div class="field">
+                            <label class="label">Is the child born or unborn</label>
+                            <div class="select" >
+                                <select name="child_status" required>
+                                    <option value="born">Born</option>
+                                    <option value="unborn">Unborn</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Expected delivery date</label>
+                            <div class="control">
+                                <input class="input" type="date" placeholder="" name="expected_delivery_date" required>
+                            </div>
+                        </div>
+
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Child's Full Name</label>
+                                    <div class="control">
+                                        <input class="input" type="text" placeholder="" name="child_full_name" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Child's Date of Birth</label>
+                                    <div class="control">
+                                        <input class="input" type="date" placeholder="" name="child_dob" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Child's Gender</label>
+                                    <div class="control">
+                                        <label class="radio">
+                                            <input type="radio" name="child_gender" value="Male"> Male
+                                        </label>
+                                        <label class="radio">
+                                            <input type="radio" name="child_gender" value="Female"> Female
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Child's Nationality</label>
+                                    <div class="select">
+                                        <select name="child_nationality" required>
+                                            <option>Singapore Citizen</option>
+                                            <option>Permanent Resident</option>
+                                            <option>Foreigner</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Child's Birth Cert / FIN / Student Pass</label>
+                            <div class="control">
+                                <input class="input" type="text" placeholder="" name="child_identify_no" required>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Preferred Start Date</label>
+                            <div class="control">
+                                <input class="input" type="date" placeholder="" name="start_date" required>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Service Level</label>
+                            <div class="select">
+                                <select name="service_level" required>
+                                    <option>Infant (2 - 17 mths)</option>
+                                    <option>PlayGroup (18 - 30 mths)</option>
+                                    <option>N1 (3 yo)</option>
+                                    <option>N2 (4 yo)</option>
+                                    <option>K1 (5 yo)</option>
+                                    <option>K2 (5 yo)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end section child -->
+
+                    <h4 class="title is-4">Enquiry Details</h3>
+                    <!-- section enquiry details -->
+                    <div class="box">
+                        <div class="field">
+                            <label class="label">Lead Source</label>
+                            <div class="select">
+                                <select name="lead_source" required>
+                                    <option>Website - MFS</option>
+                                    <option>Website - LSH</option>
+                                    <option>ECDA</option>
+                                    <option>Internal Form - Hotline</option>
+                                    <option>Internal Form - Walk-in</option>
+                                    <option>Internal Form - Email</option>
+                                    <option>Openhouse</option>
+                                    <option>Webinar</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Programme Type</label>
+                            <div class="select">
+                                <select name="programme_type" required>
+                                    <option>Full Day</option>
+                                    <option>Half Day (AM)</option>
+                                    <option>Half Day (PM)</option>
+                                    <option>MFS - Flexi Care 1 (AM)</option>
+                                    <option>MFS - Flexi Care 1 (PM)</option>
+                                    <option>MFS - Flexi Care 1 (20Hrs)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Preferred Centre (up to 3 - ranked in order)</label>
+                            <div class="select">
+                                <select multiple class="select-centre" name="preferred_centre" style="width:300px;" required>
+                                    <option>Tampines Junction</option>
+                                    <option>One Marina Boulevard</option>
+                                    <option>Mountbatten Sq</option>
+                                    <option>Delta House</option>
+                                    <option>Devan Nair</option>
+                                    <option>Downtown East</option>
+                                    <option>Orchid Country Club</option>
+                                    <option>Ulu Pandan</option>
+                                    <option>MSF</option>
+                                    <option>Kent Vale</option>
+                                    <option>OCBC</option>
+                                    <option>OCBC East</option>
+                                    <option>SGH</option>
+                                    <option>Temasek Poly</option>
+                                    <option>Ngee Ann Poly</option>
+                                    <option>Republic Poly</option>
+                                    <option>MOE</option>
+                                    <option>KTPH</option>
+                                    <option>Alexandra Hospital</option>
+                                    <option>KKH</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Household Income</label>
+                            <div class="select">
+                                <select name="income" required>
+                                    <option selected disabled>Choose income range</option>
+                                    <option>2500 & below</option>
+                                    <option>2501 to 3000</option>
+                                    <option>3001 to 3500</option>
+                                    <option>3501 to 4000</option>
+                                    <option>4001 to 4500</option>
+                                    <option>4501 to 7500</option>
+                                    <option>7501 to 10000</option>
+                                    <option>10000 to 12500</option>
+                                    <option>12501 to 15000</option>
+                                    <option>15000 & above</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Referral Information</label>
+                            <div class="control">
+                                <input class="input" type="text" placeholder="" name="referral" required>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Workplace Association</label>
+                            <div class="select">
+                                <select name="workplace_association" required>
+                                    <option>LSH</option>
+                                    <option>MFS</option>
+                                    <option>NTUC</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Has a Centre Visit been conducted?</label>
+                            <div class="control">
+                                <label class="radio">
+                                    <input type="radio" name="centre_visit_option" value="yes"> Yes
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="centre_visit_option" value="no"> No
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Centre of Visit</label>
+                                    <div class="control">
+                                        <input class="input" type="text" placeholder="" name="centre_visit" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Date of Centre Visit</label>
+                                    <div class="control">
+                                        <input class="input" type="date" placeholder="" name="centre_visit_date" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Notes</label>
+                            <div class="control">
+                                <textarea class="textarea" placeholder="Your notes here" name="notes" required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Marketing Consent</label>
+                            <div class="select">
+                                <select multiple class="select-consent" name="marketing_consent" style="width:300px;" required>
+                                    <option>All</option>
+                                    <option>Email</option>
+                                    <option>SMS</option>
+                                    <option>Phone</option>
+                                    <option>App</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end section enquiry details -->
+
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-success" type="submit">Submit MFS Application</button>
+                        </div>
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal-submit" class="modal">
+        <div class="modal-background"></div>
+
+        <div class="modal-content">
+            <div class="box">
+                <span class="submit-icon"></span>
+                <div class="submit-message"></div>
+                <button class="button is-success btn-close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        /* exported gapiLoaded */
+        /* exported gisLoaded */
+        /* exported handleAuthClick */
+        /* exported handleSignoutClick */
+
+        // TODO(developer): Set to client ID and API key from the Developer Console
+        const CLIENT_ID = '131782059606-38o5llf96b9f45kodikj3vftmshg1bjr.apps.googleusercontent.com';
+        const API_KEY = 'AIzaSyBswKtyy4lFEze5R8LRxLyQ_P88dAA_2Bs';
+
+
+        // Discovery doc URL for APIs used by the quickstart
+        const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/people/v1/rest';
+
+        // Authorization scopes required by the API; multiple scopes can be
+        // included, separated by spaces.
+        const SCOPES = 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile';
+
+        var token;
+        let tokenClient;
+        let gapiInited = false;
+        let gisInited = false;
+
+        
+            document.getElementById('authorize_button').style.visibility = 'hidden';
+            document.getElementById('signout_button').style.visibility = 'hidden';
+
+        // function handleCredentialResponse(response) {
+        //     console.log("Encoded JWT ID token: " + response.credential);
+        //     handleAuthClick();
+        // }
+        // window.onload = function () {
+        //   google.accounts.id.initialize({
+        //     client_id: CLIENT_ID,
+        //     callback: handleCredentialResponse
+        //   });
+        //   google.accounts.id.renderButton(
+        //     document.getElementById("authorize_button"),
+        //     { theme: "outline", size: "large" }  // customization attributes
+        //   );
+        // }
+
+      /**
+       * Callback after api.js is loaded.
+       */
+      function gapiLoaded() {
+        gapi.load('client', intializeGapiClient);
+      }
+
+      /**
+       * Callback after the API client is loaded. Loads the
+       * discovery doc to initialize the API.
+       */
+      async function intializeGapiClient() {
+        await gapi.client.init({
+          apiKey: API_KEY,
+          discoveryDocs: [DISCOVERY_DOC],
+        });
+        gapiInited = true;
+        maybeEnableButtons();
+      }
+
+      /**
+       * Callback after Google Identity Services are loaded.
+       */
+      function gisLoaded() {
+        tokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: CLIENT_ID,
+          scope: SCOPES,
+          callback: '', // defined later
+        });
+        gisInited = true;
+        maybeEnableButtons();
+      }
+
+      /**
+       * Enables user interaction after all libraries are loaded.
+       */
+      function maybeEnableButtons() {
+        if (gapiInited && gisInited) {
+            document.getElementById('authorize_button').style.visibility = 'visible';
+        }
+      }
+
+    $( document ).ready(function() {
+        if(sessionStorage.getItem("nfc-mfs-token")){
+            if (gapiInited && gisInited) {
+                displayItemsWhenSignedIn();
+            }
+        }
+
+      /**
+       *  Sign in the user upon button click.
+       */
+
+        function displayItemsWhenSignedIn(){
+            document.getElementById('signout_button').style.visibility = 'visible';
+            document.getElementById('authorize_button').innerText = 'Refresh';
+            loadPerson();
+        }
+        function handleAuthClick() {
+            tokenClient.callback = async (resp) => {
+              if (resp.error !== undefined) {
+                throw (resp);
+              }
+              displayItemsWhenSignedIn();
+            };
+
+            if (gapi.client.getToken() === null) {
+              // Prompt the user to select a Google Account and ask for consent to share their data
+              // when establishing a new session.
+              tokenClient.requestAccessToken({prompt: 'consent'});
+            } else {
+              // Skip display of account chooser and consent dialog for an existing session.
+              tokenClient.requestAccessToken({prompt: ''});
+            }
+        }
+
+      /**
+       *  Sign out the user upon button click.
+       */
+      function handleSignoutClick() {
+        token = gapi.client.getToken();
+        if (token !== null) {
+          google.accounts.oauth2.revoke(token.access_token);
+          gapi.client.setToken('');
+          document.getElementById('content').innerText = '';
+          document.getElementById('authorize_button').innerText = 'Authorize';
+          document.getElementById('signout_button').style.visibility = 'hidden';
+
+          sessionStorage.removeItem("nfc-mfs-token");
+          sessionStorage.removeItem("nfc-mfs-name");
+          sessionStorage.removeItem("nfc-mfs-email");
+        }
+      }
+
+      function loadPerson() {
+        token = gapi.client.getToken();
+        sessionStorage.setItem("nfc-mfs-token", token.access_token);
+
+        gapi.client.people.people.get({
+          'resourceName': 'people/me',
+          'requestMask.includeField': 'person.names,person.emailAddresses'
+        }).then(function(resp) {
+          var p = document.createElement('p');
+          var name = resp.result.names[0].givenName;
+          var email = resp.result.emailAddresses[0].value;
+
+          sessionStorage.setItem("nfc-mfs-name", name);
+          sessionStorage.setItem("nfc-mfs-email", email);
+
+
+            document.getElementById('form-container').style.display = 'block';
+            p.appendChild(document.createTextNode('Hello, ' + name +' (' + email + ')'));
+            document.getElementById('sign-in-content').appendChild(p);
+
+            $('input[name="parent_full_name"').val(name);
+            $('input[name="parent_email').val(email);
+        });
+      }
+            $("#authorize_button").click(function() {
+                handleAuthClick();
+            });
+
+            $("#signout_button").click(function() {
+                handleSignoutClick();
+            });
+
+        
+            $(".select-centre").selectize({
+              maxItems: 3,
+            });
+
+            $(".select-consent").selectize();
+
+            $(".tab-menu").click(function() {
+                if($(this).attr('id') == "tab-mfs")
+                    openTab(event,'mfs');
+                else
+                    openTab(event,'lsh');
+            })
+
+            function openTab(evt, tabName) {
+                $(".content-tab").hide();
+                $(".tab-menu").removeClass("is-active");
+                $("#tab-"+tabName).addClass("is-active");
+                $("#content-tab-"+tabName).show();
+            }
+
+            function showModalSuccess(){
+                $("#modal-submit").addClass("is-active");
+                $(".submit-icon").html('<i class="fa-regular fa-circle-check fa-4x"></i>');
+                $(".submit-message").html('Your data has been saved');
+            }
+
+            function showModalFailed(){
+                $("#modal-submit").addClass("is-active");
+                $(".submit-icon").html('<i class="fa-regular fa-circle-xmark fa-4x"></i>');
+                $(".submit-message").html('Something wrong when saving your data');
+            }
+
+            $("#form-lsh").submit(function(e) {
+                e.preventDefault();
+
+                $("#form-lsh").validate({
+                  // messages: {
+                  //   name: "Please specify your name",
+                  //   email: {
+                  //     required: "We need your email address to contact you",
+                  //     email: "Your email address must be in the format of name@domain.com"
+                  //   }
+                  // }
+                    submitHandler: function(form) {
+                        $.ajax({
+                            url: 'https://nfc-api.onyxisland.com/api/v1/mfs-registration/mfs-register',
+                            type: 'POST',
+                            dataType: 'json',
+                            crossOrigin: true,
+                            headers: { 
+                                'x-api-key': 'secret'
+                            },
+                            data: $("#form-lsh").serialize(),
+                            success: function(data) {
+                                console.log(data);
+                                if(data.code == '200'){
+                                    showModalSuccess();
+                                }
+                                else{
+                                    showModalFailed();
+                                }
+                            }
+                        });
+                    }
+                });
+
+                
+
+            });
+
+            $(".modal-background, .btn-close").click(function() {
+                $("#modal-submit").removeClass("is-active");
+            })
+
+        });
+
+    </script>
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+    
+  </body>
+</html>
